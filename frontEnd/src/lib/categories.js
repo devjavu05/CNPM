@@ -1,0 +1,22 @@
+export const BOOK_CATEGORIES = [
+  "Chính trị - Lịch sử",
+  "Danh nhân - Tự truyện",
+  "Dạy làm giàu",
+  "Học ngoại ngữ",
+  "Khoa học - Kỹ thuật",
+  "Kiếm hiệp - Tiên hiệp",
+  "Kinh tế - Quản lý",
+  "Kỹ năng - Tư duy",
+  "Ngôn tình - Đam mỹ",
+  "Nuôi dạy con",
+  "Ôn thi THPT",
+  "Sách tham khảo",
+  "Triết học",
+  "Trinh thám - Kinh dị",
+  "Truyện cười",
+  "Truyện tranh - Manga",
+  "Tử vi - Phong thủy",
+  "Văn hóa - Tôn giáo",
+  "Văn học",
+  "Y học - Sức khỏe"
+];
