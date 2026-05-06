@@ -244,10 +244,15 @@ export default function StaffBookDetailPage() {
 
   const summary = useMemo(() => {
     const activeCopies = copies.filter((copy) => copy.status !== "THANH_LY");
+    const isAvailableStatus = (status) =>
+      ["AVAILABLE", "SAN_SANG"].includes(String(status || "").toUpperCase());
+    const isBorrowedStatus = (status) =>
+      ["BORROWED", "BORROWING", "DANG_MUON"].includes(String(status || "").toUpperCase());
+
     return {
       total: activeCopies.length,
-      available: activeCopies.filter((copy) => copy.status === "AVAILABLE" || copy.isAvailable).length,
-      borrowed: activeCopies.filter((copy) => copy.status === "BORROWED" || copy.status === "BORROWING" || !copy.isAvailable).length,
+      available: activeCopies.filter((copy) => isAvailableStatus(copy.status) || (copy.isAvailable && !isBorrowedStatus(copy.status))).length,
+      borrowed: activeCopies.filter((copy) => isBorrowedStatus(copy.status)).length,
       lost: activeCopies.filter((copy) => copy.status === "LOST").length
     };
   }, [copies]);
