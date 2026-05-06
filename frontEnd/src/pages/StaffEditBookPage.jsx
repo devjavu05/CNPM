@@ -23,13 +23,10 @@ const DEFAULT_UPDATE_FORM = {
 export default function StaffEditBookPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const canUpdateBook = hasPermission("UPDATE_DAU_SACH");
 
   const [book, setBook] = useState(null);
   const [updateForm, setUpdateForm] = useState(DEFAULT_UPDATE_FORM);
-  const [updateCoverFile, setUpdateCoverFile] = useState(null);
-
   const detailStatus = useStatus();
   const updateStatus = useStatus();
 
@@ -51,8 +48,6 @@ export default function StaffEditBookPage() {
       accessLink: book.eBookLink || "",
       eBookPrice: book.eBookPrice ?? "",
     });
-
-    setUpdateCoverFile(null);
   }, [book]);
 
   async function loadBook() {
@@ -65,30 +60,15 @@ export default function StaffEditBookPage() {
     }
   }
 
-  function handleFileSelection(file, setter) {
-    if (!file) {
-      setter(null);
-      return;
-    }
-    setter({ file, previewUrl: URL.createObjectURL(file) });
-  }
-
-  async function uploadCoverIfNeeded(fileState) {
-    if (!fileState?.file) return null;
-    return libraryApi.uploadBookCover(fileState.file);
-  }
-
   async function handleUpdate(event) {
     event.preventDefault();
     if (!book) return;
 
     updateStatus.clearStatus();
     try {
-      const uploadedCoverUrl = await uploadCoverIfNeeded(updateCoverFile);
       await libraryApi.updateBook(book.id, {
         ...updateForm,
         floorNumber: Number(updateForm.floorNumber),
-        coverImageUrl: uploadedCoverUrl || updateForm.coverImageUrl,
         eBookPrice: updateForm.eBookPrice ? Number(updateForm.eBookPrice) : null,
       });
       updateStatus.setSuccess("Cập nhật đầu sách thành công.");
@@ -100,8 +80,7 @@ export default function StaffEditBookPage() {
     }
   }
 
-  const updatePreviewUrl =
-    updateCoverFile?.previewUrl || updateForm.coverImageUrl || "";
+  const updatePreviewUrl = updateForm.coverImageUrl || "";
   const updateDefaultLocation = getBookLocation(
     updateForm.category,
     updateForm.floorNumber,
@@ -247,26 +226,19 @@ export default function StaffEditBookPage() {
                 />
               </div>
               <div className="field full">
-                <label>Đổi ảnh bìa từ máy</label>
+                <label>Link ảnh bìa</label>
                 <input
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
+                  type="url"
+                  placeholder="https://example.com/cover.jpg"
+                  value={updateForm.coverImageUrl}
                   onChange={(event) =>
-                    handleFileSelection(
-                      event.target.files?.[0] || null,
-                      setUpdateCoverFile,
-                    )
+                    setUpdateForm({
+                      ...updateForm,
+                      coverImageUrl: event.target.value,
+                    })
                   }
                 />
               </div>
-              {updatePreviewUrl ? (
-                <div className="field full">
-                  <label>Xem trước ảnh bìa</label>
-                  <div className="cover-upload-preview compact">
-                    <img src={updatePreviewUrl} alt="Xem trước ảnh bìa" />
-                  </div>
-                </div>
-              ) : null}
               <div className="field full">
                 <label>Mô tả</label>
                 <textarea

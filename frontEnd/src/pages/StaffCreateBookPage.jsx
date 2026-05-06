@@ -16,6 +16,7 @@ const DEFAULT_CREATE_FORM = {
   longIntroduction: "",
   floorNumber: "1",
   publishYear: "",
+  coverImageUrl: "",
   copyCount: 1,
   physicalCondition: "NEW",
   accessLink: "",
@@ -24,36 +25,18 @@ const DEFAULT_CREATE_FORM = {
 
 export default function StaffCreateBookPage() {
   const navigate = useNavigate();
-
   const canCreateBook = hasPermission("CREATE_DAU_SACH");
 
   const [createForm, setCreateForm] = useState(DEFAULT_CREATE_FORM);
-  const [createCoverFile, setCreateCoverFile] = useState(null);
-
   const createStatus = useStatus();
-
-  function handleFileSelection(file, setter) {
-    if (!file) {
-      setter(null);
-      return;
-    }
-    setter({ file, previewUrl: URL.createObjectURL(file) });
-  }
-
-  async function uploadCoverIfNeeded(fileState) {
-    if (!fileState?.file) return null;
-    return libraryApi.uploadBookCover(fileState.file);
-  }
 
   async function handleCreate(event) {
     event.preventDefault();
     createStatus.clearStatus();
     try {
-      const uploadedCoverUrl = await uploadCoverIfNeeded(createCoverFile);
       const created = await libraryApi.createInventoryBook({
         ...createForm,
         floorNumber: Number(createForm.floorNumber),
-        coverImageUrl: uploadedCoverUrl,
         publishYear: createForm.publishYear
           ? Number(createForm.publishYear)
           : null,
@@ -69,7 +52,7 @@ export default function StaffCreateBookPage() {
     }
   }
 
-  const createPreviewUrl = createCoverFile?.previewUrl || "";
+  const createPreviewUrl = createForm.coverImageUrl || "";
   const createDefaultLocation = getBookLocation(
     createForm.category,
     createForm.floorNumber,
@@ -176,15 +159,16 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field full">
-              <label>Ảnh bìa từ máy</label>
+              <label>Link ảnh bìa</label>
               <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
+                type="url"
+                placeholder="https://example.com/cover.jpg"
+                value={createForm.coverImageUrl}
                 onChange={(event) =>
-                  handleFileSelection(
-                    event.target.files?.[0] || null,
-                    setCreateCoverFile,
-                  )
+                  setCreateForm({
+                    ...createForm,
+                    coverImageUrl: event.target.value,
+                  })
                 }
               />
             </div>
