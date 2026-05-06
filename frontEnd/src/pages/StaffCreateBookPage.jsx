@@ -60,7 +60,7 @@ export default function StaffCreateBookPage() {
         copyCount: Number(createForm.copyCount),
         eBookPrice: createForm.eBookPrice ? Number(createForm.eBookPrice) : null,
       });
-      createStatus.setSuccess("Da them dau sach moi cung lo ban sao ban dau.");
+      createStatus.setSuccess("Đã thêm đầu sách mới cùng lô bản sao ban đầu.");
       setTimeout(() => {
         navigate(`/workspace/catalog/${created.id}`, { replace: true });
       }, 1000);
@@ -79,12 +79,12 @@ export default function StaffCreateBookPage() {
     return (
       <>
         <PageHero
-          eyebrow="Canh bao"
-          title="Ban khong co quyen truy cap trang nay"
+          eyebrow="Cảnh báo"
+          title="Bạn không có quyền truy cập trang này"
         />
         <section className="panel section-panel">
           <Link className="button" to="/workspace/catalog">
-            Quay lai kho sach
+            Quay lại kho sách
           </Link>
         </section>
       </>
@@ -94,9 +94,9 @@ export default function StaffCreateBookPage() {
   return (
     <>
       <PageHero
-        eyebrow="Kho sach"
-        title="Them dau sach vao kho"
-        description="Tao mot dau sach moi va nhap ban sao ban dau."
+        eyebrow="Kho sách"
+        title="Thêm đầu sách vào kho"
+        description="Tạo một đầu sách mới và nhập bản sao ban đầu."
       />
 
       <section className="detail-layout">
@@ -106,7 +106,7 @@ export default function StaffCreateBookPage() {
               <img
                 className="book-cover"
                 src={createPreviewUrl}
-                alt="Xem truoc anh bia"
+                alt="Xem trước ảnh bìa"
               />
             ) : (
               <div className="book-cover book-cover-fallback">TV</div>
@@ -114,19 +114,19 @@ export default function StaffCreateBookPage() {
           </div>
           <div className="detail-cover-actions">
             <Link className="ghost-button" to="/workspace/catalog">
-              Quay lai kho sach
+              Quay lại kho sách
             </Link>
           </div>
         </aside>
 
         <section className="panel detail-main-panel">
-          <span className="eyebrow">Tao dau sach moi</span>
-          <h1 className="detail-title">Them dau sach vao kho</h1>
+          <span className="eyebrow">Tạo đầu sách mới</span>
+          <h1 className="detail-title">Thêm đầu sách vào kho</h1>
           <StatusMessage status={createStatus.status} />
 
           <form className="form-grid" onSubmit={handleCreate}>
             <div className="field">
-              <label>Ten sach</label>
+              <label>Tên sách</label>
               <input
                 value={createForm.title}
                 onChange={(event) =>
@@ -136,7 +136,7 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field">
-              <label>Tac gia</label>
+              <label>Tác giả</label>
               <input
                 value={createForm.author}
                 onChange={(event) =>
@@ -146,7 +146,7 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field">
-              <label>The loai</label>
+              <label>Thể loại</label>
               <select
                 value={createForm.category}
                 onChange={(event) =>
@@ -154,7 +154,7 @@ export default function StaffCreateBookPage() {
                 }
                 required
               >
-                <option value="">Chon the loai</option>
+                <option value="">Chọn thể loại</option>
                 {BOOK_CATEGORIES.map((category) => (
                   <option key={category} value={category}>
                     {category}
@@ -163,7 +163,7 @@ export default function StaffCreateBookPage() {
               </select>
             </div>
             <div className="field">
-              <label>Nam xuat ban</label>
+              <label>Năm xuất bản</label>
               <input
                 type="number"
                 value={createForm.publishYear}
@@ -176,7 +176,7 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field full">
-              <label>Anh bia tu may</label>
+              <label>Ảnh bìa từ máy</label>
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
@@ -189,7 +189,7 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field">
-              <label>So ban sao ban dau</label>
+              <label>Số bản sao ban đầu</label>
               <input
                 type="number"
                 min="0"
@@ -204,7 +204,7 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field">
-              <label>Tang luu tru</label>
+              <label>Tầng lưu trữ</label>
               <select
                 value={createForm.floorNumber}
                 onChange={(event) =>
@@ -217,34 +217,34 @@ export default function StaffCreateBookPage() {
               >
                 {LIBRARY_FLOORS.map((floor) => (
                   <option key={floor} value={String(floor)}>
-                    Tang {floor}
+                    Tầng {floor}
                   </option>
                 ))}
               </select>
             </div>
             <div className="field">
-              <label>Ke theo the loai</label>
+              <label>Kệ theo thể loại</label>
               <input
                 value={
                   createForm.category
-                    ? `Ke ${getShelfCode(createForm.category)}`
-                    : "Chon the loai truoc"
+                    ? `Kệ ${getShelfCode(createForm.category)}`
+                    : "Chọn thể loại trước"
                 }
                 readOnly
               />
             </div>
             <div className="field full">
-              <label>Vi tri dau sach</label>
+              <label>Vị trí đầu sách</label>
               <input
                 value={
                   createDefaultLocation ||
-                  "Chon the loai va tang de xac dinh vi tri"
+                  "Chọn thể loại và tầng để xác định vị trí"
                 }
                 readOnly
               />
             </div>
             <div className="field">
-              <label>Tinh trang vat ly mac dinh</label>
+              <label>Tình trạng vật lý mặc định</label>
               <select
                 value={createForm.physicalCondition}
                 onChange={(event) =>
@@ -254,14 +254,14 @@ export default function StaffCreateBookPage() {
                   })
                 }
               >
-                <option value="NEW">Moi</option>
-                <option value="GOOD">Tot</option>
-                <option value="WORN">Cu</option>
-                <option value="DAMAGED">Hong</option>
+                <option value="NEW">Mới</option>
+                <option value="GOOD">Tốt</option>
+                <option value="WORN">Cũ</option>
+                <option value="DAMAGED">Hỏng</option>
               </select>
             </div>
             <div className="field full">
-              <label>Mo ta</label>
+              <label>Mô tả</label>
               <textarea
                 value={createForm.description}
                 onChange={(event) =>
@@ -273,7 +273,7 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field full">
-              <label>Gioi thieu dai ve cuon sach</label>
+              <label>Giới thiệu dài về cuốn sách</label>
               <textarea
                 value={createForm.longIntroduction}
                 onChange={(event) =>
@@ -285,7 +285,7 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field full">
-              <label>Link trang tai E-Book</label>
+              <label>Link trang tải E-Book</label>
               <input
                 type="url"
                 placeholder="https://example.com/tai-sach"
@@ -299,7 +299,7 @@ export default function StaffCreateBookPage() {
               />
             </div>
             <div className="field">
-              <label>Gia E-Book (VND)</label>
+              <label>Giá E-Book (VND)</label>
               <input
                 type="number"
                 min="0"
@@ -316,10 +316,10 @@ export default function StaffCreateBookPage() {
             </div>
             <div className="form-actions">
               <button className="button" type="submit">
-                Luu dau sach
+                Lưu đầu sách
               </button>
               <Link className="ghost-button" to="/workspace/catalog">
-                Dong
+                Đóng
               </Link>
             </div>
           </form>

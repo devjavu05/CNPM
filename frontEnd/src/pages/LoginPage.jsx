@@ -15,7 +15,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (consumeSessionExpiredFlag()) {
-      loginStatus.setError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+      loginStatus.setError(
+        "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+      );
     }
   }, []);
 
@@ -24,9 +26,12 @@ export default function LoginPage() {
     loginStatus.clearStatus();
     try {
       const result = await libraryApi.login(form);
-      if (!result?.token) throw new Error("Hệ thống không trả về token đăng nhập.");
+      if (!result?.token)
+        throw new Error("Hệ thống không trả về token đăng nhập.");
       setToken(result.token);
-      loginStatus.setSuccess("Đăng nhập thành công. Đang chuyển tới giao diện phù hợp.");
+      loginStatus.setSuccess(
+        "Đăng nhập thành công. Đang chuyển tới giao diện phù hợp.",
+      );
       setTimeout(() => navigate(result.redirectPath || "/workspace"), 500);
     } catch (error) {
       loginStatus.setError(error.message);
@@ -38,7 +43,9 @@ export default function LoginPage() {
     forgotStatus.clearStatus();
     try {
       const result = await libraryApi.forgotPassword({ email: forgotEmail });
-      forgotStatus.setSuccess(result || "Yêu cầu khôi phục mật khẩu đã được ghi nhận.");
+      forgotStatus.setSuccess(
+        result || "Yêu cầu khôi phục mật khẩu đã được ghi nhận.",
+      );
       setForgotEmail("");
     } catch (error) {
       forgotStatus.setError(error.message);
@@ -65,14 +72,29 @@ export default function LoginPage() {
           <form className="form-grid" onSubmit={handleSubmit}>
             <div className="field full">
               <label>Tên đăng nhập</label>
-              <input value={form.username} onChange={(event) => setForm({ ...form, username: event.target.value })} required />
+              <input
+                value={form.username}
+                onChange={(event) =>
+                  setForm({ ...form, username: event.target.value })
+                }
+                required
+              />
             </div>
             <div className="field full">
               <label>Mật khẩu</label>
-              <input type="password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} required />
+              <input
+                type="password"
+                value={form.password}
+                onChange={(event) =>
+                  setForm({ ...form, password: event.target.value })
+                }
+                required
+              />
             </div>
             <div className="form-actions">
-              <button className="button" type="submit">Xác nhận</button>
+              <button className="button" type="submit">
+                Xác nhận
+              </button>
             </div>
           </form>
         </section>
@@ -88,20 +110,33 @@ export default function LoginPage() {
           <form className="form-grid" onSubmit={handleForgotPassword}>
             <div className="field full">
               <label>Email độc giả</label>
-              <input type="email" value={forgotEmail} onChange={(event) => setForgotEmail(event.target.value)} required />
+              <input
+                type="email"
+                value={forgotEmail}
+                onChange={(event) => setForgotEmail(event.target.value)}
+                required
+              />
             </div>
             <div className="form-actions">
-              <button className="ghost-button" type="submit">Gửi yêu cầu khôi phục</button>
+              <button className="ghost-button" type="submit">
+                Gửi yêu cầu khôi phục
+              </button>
             </div>
           </form>
           <div className="stack">
             <div className="mini-feature">
               <strong>Điều hướng theo vai trò</strong>
-              <p className="muted">Chủ thư viện và Thủ thư sẽ vào khu làm việc thư viện. Độc giả sẽ vào khu vực tra cứu và đặt trước sách.</p>
+              <p className="muted">
+                Chủ thư viện và Thủ thư sẽ vào khu làm việc thư viện. Độc giả sẽ
+                vào khu vực tra cứu và đặt trước sách.
+              </p>
             </div>
             <div className="mini-feature">
               <strong>Bảo mật đăng nhập</strong>
-              <p className="muted">Tài khoản sẽ bị khóa tạm thời nếu đăng nhập sai quá 5 lần trong 15 phút.</p>
+              <p className="muted">
+                Tài khoản sẽ bị khóa tạm thời nếu đăng nhập sai quá 5 lần trong
+                15 phút.
+              </p>
             </div>
           </div>
         </section>
