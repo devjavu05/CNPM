@@ -1,0 +1,126 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "25"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Build Backend
+        run: |
+          cd standardProject
+          mvn clean package -DskipTests
+
+      - name: Run Backend Tests
+        run: |
+          cd standardProject
+          mvn test
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-jar
+          path: standardProject/target/*.jar
+
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "frontEnd/package-lock.json"
+
+      - name: Install Dependencies
+        run: |
+          cd frontEnd
+          npm ci
+
+      - name: Build Frontend
+        run: |
+          cd frontEnd
+          npm run build
+
+      - name: Run Frontend Tests
+        run: |
+          cd frontEnd
+          npm run test || true
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-dist
+          path: frontEnd/dist
+
+  docker-build:
+    needs: [build-backend, build-frontend]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Backend Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: library-backend:latest
+          push: false
+
+      - name: Build Frontend Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontEnd
+          file: ./frontEnd/Dockerfile
+          tags: library-frontend:latest
+          push: false
+
+  code-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "25"
+          distribution: "temurin"
+
+      - name: Run Backend Checkstyle
+        run: |
+          cd standardProject
+          mvn checkstyle:check || true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Run Frontend Linter
+        run: |
+          cd frontEnd
+          npm install
+          npm run lint || true

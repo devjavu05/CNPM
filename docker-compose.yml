@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: library-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: library
+      MYSQL_USER: library_user
+      MYSQL_PASSWORD: library_password
+      TZ: "Asia/Ho_Chi_Minh"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: library-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/library
+      SPRING_DATASOURCE_USERNAME: library_user
+      SPRING_DATASOURCE_PASSWORD: library_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_PROFILES_ACTIVE: production
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      timeout: 20s
+      retries: 5
+      interval: 30s
+
+  frontend:
+    build:
+      context: ./frontEnd
+      dockerfile: Dockerfile
+    container_name: library-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:8080
+    depends_on:
+      - backend
+    networks:
+      - library-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  library-network:
+    driver: bridge

@@ -1,0 +1,111 @@
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Build and compilation
+/target/
+/build/
+/dist/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle
+build/
+gradle-app.setting
+.gradletasknamecache
+
+# Node.js and npm
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+.npm
+.eslintcache
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+dist/
+*.egg
+
+# Environment and configuration
+.env
+.env.local
+.env.production
+.env.test
+*.properties.local
+config.local.js
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.sql.backup
+
+# Coverage and testing
+coverage/
+.coverage
+.nyc_output/
+/test-results/
+/junit.xml
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Git
+.git/
+.gitattributes
+
+# OS specific
+Thumbs.db
+.DS_Store
+.Spotlight-V100
+.Trashes
+._*
+.AppleDouble
+
+# IDE cache
+.cache/
+.venv/
+venv/
+env/
+
+# Project specific
+uploads/
+tmp/
+temp/
+cache/
+*.key
+*.pem

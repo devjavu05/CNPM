@@ -17,6 +17,7 @@ const DEFAULT_UPDATE_FORM = {
   floorNumber: "1",
   coverImageUrl: "",
   accessLink: "",
+  eBookPrice: "",
 };
 
 export default function StaffEditBookPage() {
@@ -48,6 +49,7 @@ export default function StaffEditBookPage() {
       floorNumber: book.floorNumber ? String(book.floorNumber) : "1",
       coverImageUrl: book.coverImageUrl || "",
       accessLink: book.eBookLink || "",
+      eBookPrice: book.eBookPrice ?? "",
     });
 
     setUpdateCoverFile(null);
@@ -56,7 +58,7 @@ export default function StaffEditBookPage() {
   async function loadBook() {
     detailStatus.clearStatus();
     try {
-      const result = await libraryApi.getLookupBookDetail(id);
+      const result = await libraryApi.getBookById(id);
       setBook(result);
     } catch (error) {
       detailStatus.setError(error.message);
@@ -87,8 +89,9 @@ export default function StaffEditBookPage() {
         ...updateForm,
         floorNumber: Number(updateForm.floorNumber),
         coverImageUrl: uploadedCoverUrl || updateForm.coverImageUrl,
+        eBookPrice: updateForm.eBookPrice ? Number(updateForm.eBookPrice) : null,
       });
-      updateStatus.setSuccess("Cập nhật đầu sách thành công.");
+      updateStatus.setSuccess("Cap nhat dau sach thanh cong.");
       setTimeout(() => {
         navigate(`/workspace/catalog/${book.id}`, { replace: true });
       }, 1000);
@@ -108,12 +111,12 @@ export default function StaffEditBookPage() {
     return (
       <>
         <PageHero
-          eyebrow="Cảnh báo"
-          title="Bạn không có quyền truy cập trang này"
+          eyebrow="Canh bao"
+          title="Ban khong co quyen truy cap trang nay"
         />
         <section className="panel section-panel">
           <Link className="button" to="/workspace/catalog">
-            Quay lại kho sách
+            Quay lai kho sach
           </Link>
         </section>
       </>
@@ -123,11 +126,9 @@ export default function StaffEditBookPage() {
   return (
     <>
       <PageHero
-        eyebrow="Quản lý kho sách"
-        title="Chỉnh sửa thông tin đầu sách"
-        description={
-          book ? `Đang chỉnh sửa sách: ${book.title}` : "Đang tải..."
-        }
+        eyebrow="Quan ly kho sach"
+        title="Chinh sua thong tin dau sach"
+        description={book ? `Dang chinh sua sach: ${book.title}` : "Dang tai..."}
       />
 
       <StatusMessage status={detailStatus.status} />
@@ -140,7 +141,7 @@ export default function StaffEditBookPage() {
                 <img
                   className="book-cover"
                   src={updatePreviewUrl}
-                  alt="Xem trước ảnh bìa"
+                  alt="Xem truoc anh bia"
                 />
               ) : (
                 <div className="book-cover book-cover-fallback">TV</div>
@@ -151,14 +152,14 @@ export default function StaffEditBookPage() {
                 className="ghost-button"
                 to={`/workspace/catalog/${book.id}`}
               >
-                Quay lại chi tiết
+                Quay lai chi tiet
               </Link>
             </div>
           </aside>
 
           <section className="panel detail-main-panel">
-            <span className="eyebrow">Công cụ thủ thư</span>
-            <h1>Chỉnh sửa đầu sách</h1>
+            <span className="eyebrow">Cong cu thu thu</span>
+            <h1>Chinh sua dau sach</h1>
             <StatusMessage status={updateStatus.status} />
 
             <form
@@ -166,7 +167,7 @@ export default function StaffEditBookPage() {
               onSubmit={handleUpdate}
             >
               <div className="field">
-                <label>Tên sách</label>
+                <label>Ten sach</label>
                 <input
                   value={updateForm.title}
                   onChange={(event) =>
@@ -176,7 +177,7 @@ export default function StaffEditBookPage() {
                 />
               </div>
               <div className="field">
-                <label>Tác giả</label>
+                <label>Tac gia</label>
                 <input
                   value={updateForm.author}
                   onChange={(event) =>
@@ -186,7 +187,7 @@ export default function StaffEditBookPage() {
                 />
               </div>
               <div className="field">
-                <label>Thể loại</label>
+                <label>The loai</label>
                 <select
                   value={updateForm.category}
                   onChange={(event) =>
@@ -197,7 +198,7 @@ export default function StaffEditBookPage() {
                   }
                   required
                 >
-                  <option value="">Chọn thể loại</option>
+                  <option value="">Chon the loai</option>
                   {BOOK_CATEGORIES.map((category) => (
                     <option key={category} value={category}>
                       {category}
@@ -206,7 +207,7 @@ export default function StaffEditBookPage() {
                 </select>
               </div>
               <div className="field">
-                <label>Tầng lưu trữ</label>
+                <label>Tang luu tru</label>
                 <select
                   value={updateForm.floorNumber}
                   onChange={(event) =>
@@ -219,34 +220,34 @@ export default function StaffEditBookPage() {
                 >
                   {LIBRARY_FLOORS.map((floor) => (
                     <option key={floor} value={String(floor)}>
-                      Tầng {floor}
+                      Tang {floor}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="field">
-                <label>Kệ theo thể loại</label>
+                <label>Ke theo the loai</label>
                 <input
                   value={
                     updateForm.category
-                      ? `Kệ ${getShelfCode(updateForm.category)}`
-                      : "Chọn thể loại trước"
+                      ? `Ke ${getShelfCode(updateForm.category)}`
+                      : "Chon the loai truoc"
                   }
                   readOnly
                 />
               </div>
               <div className="field full">
-                <label>Vị trí đầu sách</label>
+                <label>Vi tri dau sach</label>
                 <input
                   value={
                     updateDefaultLocation ||
-                    "Chọn thể loại và tầng để xác định vị trí"
+                    "Chon the loai va tang de xac dinh vi tri"
                   }
                   readOnly
                 />
               </div>
               <div className="field full">
-                <label>Đổi ảnh bìa từ máy</label>
+                <label>Doi anh bia tu may</label>
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
@@ -260,14 +261,14 @@ export default function StaffEditBookPage() {
               </div>
               {updatePreviewUrl ? (
                 <div className="field full">
-                  <label>Xem trước ảnh bìa</label>
+                  <label>Xem truoc anh bia</label>
                   <div className="cover-upload-preview compact">
-                    <img src={updatePreviewUrl} alt="Xem trước ảnh bìa" />
+                    <img src={updatePreviewUrl} alt="Xem truoc anh bia" />
                   </div>
                 </div>
               ) : null}
               <div className="field full">
-                <label>Mô tả</label>
+                <label>Mo ta</label>
                 <textarea
                   value={updateForm.description}
                   onChange={(event) =>
@@ -279,7 +280,7 @@ export default function StaffEditBookPage() {
                 />
               </div>
               <div className="field full">
-                <label>Giới thiệu dài về cuốn sách</label>
+                <label>Gioi thieu dai ve cuon sach</label>
                 <textarea
                   value={updateForm.longIntroduction}
                   onChange={(event) =>
@@ -291,7 +292,7 @@ export default function StaffEditBookPage() {
                 />
               </div>
               <div className="field full">
-                <label>Link trang tải E-Book</label>
+                <label>Link trang tai E-Book</label>
                 <input
                   type="url"
                   placeholder="https://example.com/tai-sach"
@@ -304,15 +305,31 @@ export default function StaffEditBookPage() {
                   }
                 />
               </div>
+              <div className="field">
+                <label>Gia E-Book (VND)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="1000"
+                  placeholder="49000"
+                  value={updateForm.eBookPrice}
+                  onChange={(event) =>
+                    setUpdateForm({
+                      ...updateForm,
+                      eBookPrice: event.target.value,
+                    })
+                  }
+                />
+              </div>
               <div className="form-actions">
                 <button className="button secondary" type="submit">
-                  Cập nhật
+                  Cap nhat
                 </button>
                 <Link
                   className="ghost-button"
                   to={`/workspace/catalog/${book.id}`}
                 >
-                  Đóng
+                  Dong
                 </Link>
               </div>
             </form>
